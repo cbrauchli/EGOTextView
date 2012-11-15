@@ -212,7 +212,7 @@ static CGFloat AttachmentRunDelegateGetWidth(void *refCon) {
 
 - (UITextAutocorrectionType)autocorrectionType
 {
-    return UITextAutocorrectionTypeNo; // For now, until autocorrection is draw correctly
+    return UITextAutocorrectionTypeYes; // For now, until autocorrection is draw correctly
 }
 
 - (void)commonInit {
@@ -303,27 +303,33 @@ static CGFloat AttachmentRunDelegateGetWidth(void *refCon) {
     if ([[UIMenuController sharedMenuController] isMenuVisible]) {
         [[UIMenuController sharedMenuController] setMenuVisible:NO animated:NO];
     }
-           
+    
+    [self drawText];
+    
+}
+
+- (void)drawText {
+    
     CTFramesetterRef framesetter = _framesetter;
     _framesetter = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef)self.attributedString);
     if (framesetter!=NULL) {
-        CFRelease(framesetter); 
+        CFRelease(framesetter);
     }
     
     CGRect theRect = _textContentView.frame;
     CGFloat height = [self boundingHeightForWidth:theRect.size.width];
     theRect.size.height = height+self.font.lineHeight;
-    _textContentView.frame = theRect;    
+    _textContentView.frame = theRect;
     self.contentSize = CGSizeMake(self.frame.size.width, theRect.size.height+(self.font.lineHeight*2));
-
+    
     UIBezierPath *path = [UIBezierPath bezierPathWithRect:_textContentView.bounds];
-
+    
     CTFrameRef frameRef = _frame;
     _frame =  CTFramesetterCreateFrame(_framesetter, CFRangeMake(0, 0), [path CGPath], NULL);
     if (frameRef!=NULL) {
         CFRelease(frameRef);
     }
-        
+    
     for (UIView *view in _attachmentViews) {
         [view removeFromSuperview];
     }
@@ -898,10 +904,23 @@ static CGFloat AttachmentRunDelegateGetWidth(void *refCon) {
             CGFloat ascent, descent;
             CTLineGetTypographicBounds(line, &ascent, &descent, NULL);
             
-            returnRect = [_textContentView convertRect:CGRectMake(origin.x + xStart - 7.f, origin.y - descent, xEnd - xStart, ascent + (descent*2)) toView:self];
+            returnRect = [_textContentView convertRect:CGRectMake(origin.x + xStart/* - 7.f*/, origin.y - descent, xEnd - xStart, ascent + (descent*2)) toView:self];
             break;
         }
     }
+    NSLog(@"%@", NSStringFromCGRect(returnRect));
+    
+    static UIView *v;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        v = [[UIView alloc] initWithFrame:CGRectZero];
+        v.backgroundColor = [UIColor clearColor];
+        v.opaque = NO;
+        v.layer.borderWidth = 1.f;
+        v.layer.borderColor = [UIColor redColor].CGColor;
+        [self addSubview:v];
+    });
+    v.frame = returnRect;
     
     free(origins);
     return returnRect;
@@ -2359,7 +2378,7 @@ static CGFloat AttachmentRunDelegateGetWidth(void *refCon) {
 - (void)layoutSubviews {
     [super layoutSubviews];
     
-//    [self.delegate textChanged]; // reset layout on frame / orientation change
+    [self.delegate drawText]; // reset layout on frame / orientation change
     
 }
 

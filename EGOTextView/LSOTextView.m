@@ -52,7 +52,7 @@ NSString * const kLSOTaggedObjectNameAttributeName = @"LSOTaggedObjectNameAttrib
 
 - (void)egoTextView:(EGOTextView *)textView drawBeforeGlyphRun:(CTRunRef)glyphRun forLine:(CTLineRef)line withOrigin:(CGPoint)origin inContext:(CGContextRef)context
 {
-//    return;
+    return;
 //    NSDictionary *attributes = (NSDictionary *)CTRunGetAttributes(glyphRun);
     CGRect runBounds = CGRectZero;
     CGFloat ascent = 0.0f;
