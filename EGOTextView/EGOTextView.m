@@ -1355,7 +1355,7 @@ static CGFloat AttachmentRunDelegateGetWidth(void *refCon) {
 }
 
 - (UIView *)textInputView {
-    return _textContentView;
+    return self;
 }
 
 // MARK: UITextInput - Hit testing
