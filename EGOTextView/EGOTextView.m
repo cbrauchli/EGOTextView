@@ -908,22 +908,9 @@ static CGFloat AttachmentRunDelegateGetWidth(void *refCon) {
             break;
         }
     }
-    NSLog(@"%@", NSStringFromCGRect(returnRect));
-    
-    static UIView *v;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        v = [[UIView alloc] initWithFrame:CGRectZero];
-        v.backgroundColor = [UIColor clearColor];
-        v.opaque = NO;
-        v.layer.borderWidth = 1.f;
-        v.layer.borderColor = [UIColor redColor].CGColor;
-        [self addSubview:v];
-    });
-    v.frame = returnRect;
     
     free(origins);
-    return returnRect;
+    return CGRectIntegral(returnRect);
 }
 
 
