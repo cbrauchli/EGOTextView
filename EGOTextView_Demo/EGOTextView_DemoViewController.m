@@ -45,7 +45,7 @@
         view.delegate = (id<EGOTextViewDelegate>)self;
         [self.view addSubview:view];
         self.egoTextView = view;
-        self.egoTextView.text = @"Sheeeiiit it's attributed!";
+//        self.egoTextView.text = @"";
         [view becomeFirstResponder];
         
     }
